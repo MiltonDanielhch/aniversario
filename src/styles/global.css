@@ -1,7 +1,7 @@
 /* Línea gráfica: crema jaspeado, naranja para títulos, verde para etiquetas y cintas por día,
    columna de círculos productivos (cacao, castaña, granos, machetero). Sigue el tema del sistema. */
 :root {
-  --bg: #F4EEE3; --bg-veta: #EADFCC; --papel: #FCFAF5; --borde: #E4D9C6;
+  --bg: #F5EEE1; --bg-veta: #EADFCC; --papel: #FCFAF5; --borde: #E4D9C6;
   --tinta: #2B2A25; --tinta-suave: #6B655A;
   --naranja: #D46F17; --verde: #127A3E; --verde-hondo: #0B4F2A; --oro: #E8A33A;
   --enfasis: var(--verde-hondo); /* números grandes */
@@ -12,7 +12,7 @@
   --sombra: 0 18px 40px -24px rgba(60, 40, 10, .35);
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0E1912; --bg-veta: #15261B; --papel: #14231A; --borde: #24392B;
     --tinta: #EEE8DA; --tinta-suave: #A9B3A6;
@@ -22,17 +22,24 @@
     --sombra: 0 18px 40px -24px rgba(0, 0, 0, .7);
     color-scheme: dark;
   }
-}
+} */
 
 *, *::before, *::after { box-sizing: border-box }
 html { scroll-behavior: smooth; scroll-padding-top: 72px }
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
   background-image:
+    /* 1 · Sol cálido esquinado (arriba a la derecha) */
+    radial-gradient(55% 45% at 85% 0%, rgba(232, 163, 58, .16), transparent 70%),
+    /* 2 · Respiro de selva (abajo a la izquierda) */
+    radial-gradient(50% 40% at 0% 100%, rgba(18, 122, 62, .10), transparent 70%),
+    /* 3 · Vetas del jaspeado original (se conservan) */
     radial-gradient(60% 40% at 10% 5%, var(--bg-veta), transparent 70%),
     radial-gradient(45% 35% at 90% 30%, var(--bg-veta), transparent 70%),
-    radial-gradient(50% 40% at 20% 75%, var(--bg-veta), transparent 70%);
+    radial-gradient(50% 40% at 20% 75%, var(--bg-veta), transparent 70%),
+    /* 4 · Base: degradado vertical crema → arena */
+    linear-gradient(180deg, #FCF8EE 0%, var(--bg) 45%, #EFE5D2 100%);
   background-attachment: fixed;
   color: var(--tinta); font-family: var(--f-base); font-size: 16px; line-height: 1.55;
 }
@@ -67,12 +74,13 @@ header.top {
   background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--borde);
 }
-header.top .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px }
+header.top .wrap { display: grid; grid-template-columns: 1fr minmax(0, auto) 1fr; align-items: center; gap: 16px; padding-block: 10px }
+.marca { justify-self: start }
 .marca { display: flex; align-items: center; text-decoration: none }
 .marca-logo { height: 44px; width: auto; display: block }
 .marca .placeholder.marca-logo { width: 190px; padding: 2px 6px; font-size: 9px; gap: 0 }
 .marca .placeholder .ph-spec, .marca .placeholder .ph-ruta, .marca .placeholder .ph-desc { display: none }
-nav.menu { margin-left: auto; display: flex; gap: 4px }
+nav.menu { margin-left: end; display: flex; gap: 4px }
 nav.menu a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px }
 nav.menu a:hover { background: var(--papel); color: var(--verde) }
 @media (max-width: 640px) { nav.menu { display: none } }
@@ -204,3 +212,24 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 .es-pasado .toggle-fuegos { display: none }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+
+/* Hashtag oficial con degradado de marca (verde → oro → naranja) */
+.hashtag-top {
+  justify-self: center;              /* queda "en medio" del header */
+  min-width: 0; margin: 0;
+  font-style: italic; font-weight: 800;
+  font-size: clamp(11px, 1.5vw, 15px);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--verde-hondo);         /* respaldo si el clip falla */
+  background: linear-gradient(90deg,
+              var(--verde-hondo) 0%,
+              var(--verde) 30%,
+              var(--oro) 65%,
+              var(--naranja) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;  /* deja ver el degradado */
+}
+@media (max-width: 640px) {
+  .hashtag-top { font-size: 10px; letter-spacing: 0 }
+}

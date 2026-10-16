@@ -12,13 +12,13 @@ export interface Asset {
 
 export const ASSETS = {
   logo: {
-    src: '/img/logo-gad-beni.svg',
+    src: '/img/logo.png',
     alt: 'Gobierno Autónomo Departamental del Beni',
     falta: 'Logo oficial del GAD Beni (escudo + "BENI" + 8 estrellas), fondo transparente',
     medida: 'SVG, o PNG de 600 × 240 px',
   },
   cacao: {
-    src: '/img/cacao.webp',
+    src: '/img/cacao.jpg',
     alt: 'Mazorcas de cacao amazónico del Beni',
     falta: 'Foto de mazorcas de cacao',
     medida: 'Cuadrada, mínimo 800 × 800 px',
@@ -30,7 +30,7 @@ export const ASSETS = {
     medida: 'Cuadrada, mínimo 800 × 800 px',
   },
   granos: {
-    src: '/img/granos.webp',
+    src: '/img/granos.jpg',
     alt: 'Granos de soya recién cosechados',
     falta: 'Foto de cosecha de granos (soya)',
     medida: 'Cuadrada, mínimo 800 × 800 px',
