@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Provincias from '../components/Provincias.astro';
+import Cronograma from '../components/Cronograma.astro';
+import Descarga from '../components/Descarga.astro';
+import DatosBeni from '../components/DatosBeni.astro';
+import Footer from '../components/Footer.astro';
+import Fuegos from '../components/Fuegos.astro';
+---
+<Base
+  title="Beni 184 Aniversario · Cronograma oficial"
+  description="Cronograma oficial de actividades por los 184 años de creación del departamento del Beni, del 14 al 18 de noviembre de 2026 en Trinidad. Descarga el PDF."
+>
+  <Header />
+  <main id="inicio">
+    <Hero />
+    <Provincias />
+    <Cronograma />
+    <Descarga />
+    <DatosBeni />
+  </main>
+  <Footer />
+  <Fuegos />
+</Base>
+
+<script>
+  import '../scripts/celebracion';
+</script>

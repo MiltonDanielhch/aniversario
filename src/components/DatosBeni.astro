@@ -1,0 +1,20 @@
+---
+const DATOS = [
+  { cifra: '1842', titulo: 'Creación', texto: 'El presidente José Ballivián decretó la creación del departamento el 18 de noviembre de 1842, con Santísima Trinidad como capital.' },
+  { cifra: '8', titulo: 'Provincias', texto: 'Las ocho estrellas del logotipo departamental representan a sus provincias, de Iténez a Vaca Díez.' },
+  { cifra: '181', titulo: 'Años del Himno', texto: 'El 18 de noviembre también se recuerda la primera interpretación del Himno Nacional de Bolivia, en 1845.' },
+];
+---
+<section class="bloque" id="beni">
+  <div class="wrap">
+    <div class="titulo-sec">
+      <div class="eyebrow">Tierra de llanos, ríos y misiones</div>
+      <h2>El Beni en tres datos</h2>
+    </div>
+    <div class="datos">
+      {DATOS.map((d) => (
+        <div class="dato"><b>{d.cifra}</b><h3>{d.titulo}</h3><p>{d.texto}</p></div>
+      ))}
+    </div>
+  </div>
+</section>

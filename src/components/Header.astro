@@ -1,0 +1,16 @@
+---
+import AssetImage from './AssetImage.astro';
+import { ASSETS } from '../data/assets';
+---
+<header class="top">
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="Inicio">
+      <AssetImage asset={ASSETS.logo} class="marca-logo" />
+    </a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#cronograma">Cronograma</a>
+      <a href="#descargar">Descargar PDF</a>
+      <a href="#beni">El Beni</a>
+    </nav>
+  </div>
+</header>

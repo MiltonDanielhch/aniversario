@@ -1,0 +1,25 @@
+---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import type { Asset } from '../data/assets';
+
+interface Props {
+  asset: Asset;
+  class?: string;
+  /** Posición del recorte (object-position) cuando la imagen existe. */
+  foco?: string;
+}
+
+const { asset, class: clase, foco = 'center' } = Astro.props;
+const existe = existsSync(join(process.cwd(), 'public', asset.src));
+---
+{existe ? (
+  <img class={clase} src={asset.src} alt={asset.alt} style={`object-position:${foco}`} loading="lazy" decoding="async" />
+) : (
+  <div class:list={[clase, 'placeholder']} role="img" aria-label={`Imagen pendiente: ${asset.falta}`}>
+    <span class="ph-tag">Falta imagen</span>
+    <span class="ph-desc">{asset.falta}</span>
+    <span class="ph-spec">{asset.medida}</span>
+    <code class="ph-ruta">public{asset.src}</code>
+  </div>
+)}

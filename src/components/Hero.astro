@@ -1,0 +1,41 @@
+---
+import AssetImage from './AssetImage.astro';
+import { ASSETS } from '../data/assets';
+---
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">18 de noviembre · 1842 – 2026</div>
+      <div class="firma" aria-label="Beni 184 aniversario">
+        <span class="beni">Beni</span>
+        <span class="anios"><strong>184</strong><small>Aniversario</small></span>
+      </div>
+      <h1>Cronograma oficial de actividades</h1>
+      <p class="lead">Del sábado 14 al miércoles 18 de noviembre, Trinidad celebra los 184 años de creación del departamento con entradas folclóricas, foros, sesiones de honor, la Gran Serenata y el desfile del día central.</p>
+
+      <div class="cuenta">
+        <div class="cuenta-activa">
+          <div class="rotulo">Faltan para el día del Beni · hora de Bolivia</div>
+          <div class="reloj" role="timer" aria-live="off">
+            <div><b id="cd-d">--</b><span>Días</span></div>
+            <div><b id="cd-h">--</b><span>Horas</span></div>
+            <div><b id="cd-m">--</b><span>Min</span></div>
+            <div><b id="cd-s">--</b><span>Seg</span></div>
+          </div>
+        </div>
+        <div class="fiesta" aria-live="polite">
+          <h2 id="fiesta-titulo">¡Feliz aniversario, Beni!</h2>
+          <p id="fiesta-texto">Hoy se cumplen 184 años de la creación del departamento.</p>
+        </div>
+        <div class="prox" id="prox" hidden><span class="h" id="prox-h"></span><span id="prox-t"></span></div>
+      </div>
+    </div>
+
+    <div class="circulos">
+      <figure><AssetImage asset={ASSETS.cacao} foco="30% 60%" /></figure>
+      <figure><AssetImage asset={ASSETS.castana} /></figure>
+      <figure><AssetImage asset={ASSETS.granos} foco="60% 60%" /></figure>
+      <figure><AssetImage asset={ASSETS.machetero} foco="55% 30%" /></figure>
+    </div>
+  </div>
+</section>

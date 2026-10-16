@@ -1,0 +1,36 @@
+---
+import { ACTOS, DIAS, marcaDeTiempo } from '../data/cronograma';
+const dias = Object.entries(DIAS);
+---
+<section class="bloque" id="cronograma">
+  <div class="wrap">
+    <div class="titulo-sec">
+      <div class="eyebrow">Trinidad · 14 al 18 de noviembre</div>
+      <h2>Actividades por día</h2>
+    </div>
+    <div class="dias" id="filtros" role="group" aria-label="Filtrar por día">
+      <button type="button" data-filtro="todos" aria-pressed="true">Todos</button>
+      {dias.map(([fecha, d]) => <button type="button" data-filtro={fecha} aria-pressed="false">{d.corto}</button>)}
+    </div>
+    <div class="panel">
+      {dias.map(([fecha, d]) => (
+        <div class="dia" data-fecha={fecha}>
+          <h3 class="cinta">{d.largo}{d.central && <em>Día central</em>}</h3>
+          {ACTOS.filter((a) => a.fecha === fecha).map((a) => (
+            <article class="acto" data-t={marcaDeTiempo(a)}>
+              <time class="hora" datetime={`${a.fecha}T${a.hora}-04:00`}>{a.hora}</time>
+              <div>
+                <h4>{a.acto}</h4>
+                <dl>
+                  <dt>Lugar</dt><dd>{a.lugar}</dd>
+                  <dt>Institución</dt><dd>{a.institucion}</dd>
+                </dl>
+              </div>
+              <span class="estado" hidden></span>
+            </article>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
