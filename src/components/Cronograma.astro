@@ -22,7 +22,20 @@ const dias = Object.entries(DIAS);
               <div>
                 <h4>{a.acto}</h4>
                 <dl>
-                  <dt>Lugar</dt><dd>{a.lugar}</dd>
+                  <dt>Lugar</dt>
+                  <dd>
+                    {a.lugar} 
+                    <!-- Enlace directo para abrir la ubicación exacta en Google Maps -->
+                    <a 
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.lugar + ', Trinidad, Beni, Bolivia')}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="map-link"
+                      title="Ver ubicación en Google Maps"
+                    >
+                      Ver mapa 📍
+                    </a>
+                  </dd>
                   <dt>Institución</dt><dd>{a.institucion}</dd>
                 </dl>
               </div>

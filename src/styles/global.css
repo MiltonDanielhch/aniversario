@@ -30,17 +30,31 @@ body {
   margin: 0;
   background-color: var(--bg);
   background-image:
-    /* 1 · Sol cálido esquinado (arriba a la derecha) */
-    radial-gradient(55% 45% at 85% 0%, rgba(232, 163, 58, .16), transparent 70%),
-    /* 2 · Respiro de selva (abajo a la izquierda) */
-    radial-gradient(50% 40% at 0% 100%, rgba(18, 122, 62, .10), transparent 70%),
-    /* 3 · Vetas del jaspeado original (se conservan) */
-    radial-gradient(60% 40% at 10% 5%, var(--bg-veta), transparent 70%),
-    radial-gradient(45% 35% at 90% 30%, var(--bg-veta), transparent 70%),
-    radial-gradient(50% 40% at 20% 75%, var(--bg-veta), transparent 70%),
-    /* 4 · Base: degradado vertical crema → arena */
-    linear-gradient(180deg, #FCF8EE 0%, var(--bg) 45%, #EFE5D2 100%);
-  background-attachment: fixed;
+    /* === CAPAS BLANCAS ARRIBA: los "huecos de papel" que hacen leer el color === */
+    radial-gradient(min(58vw,820px) min(46vw,640px) at 26% 12%, #FFFDF6 0%, rgba(255,253,246,0) 72%), /* hero: respira tras el texto */
+    radial-gradient(min(50vw,720px) min(34vw,480px) at 50% 60%, #FFFCF3 0%, rgba(255,252,243,0) 70%), /* centro: separa cronograma/descarga */
+    radial-gradient(min(46vw,660px) min(32vw,460px) at 30% 92%, #FFFDF6 0%, rgba(255,253,246,0) 72%), /* pie: clarea el hashtag */
+
+    /* === NUBES DE COLOR (cálido arriba/der · frío abajo/izq = arcoíris beniano) === */
+    radial-gradient(min(48vw,700px) min(36vw,520px) at 82% 5%,  rgba(232,163,58,.30), transparent 70%), /* ORO sol */
+    radial-gradient(min(40vw,580px) min(44vw,620px) at 100% 16%, rgba(212,111,23,.22), transparent 72%), /* NARANJA atardecer */
+    radial-gradient(min(42vw,600px) min(34vw,480px) at 0% 22%,  rgba(18,122,62,.20),  transparent 70%), /* VERDE follaje */
+    radial-gradient(min(34vw,500px) min(26vw,380px) at 64% 30%, rgba(232,163,58,.16), transparent 72%), /* gota oro */
+    radial-gradient(min(38vw,560px) min(30vw,440px) at 100% 42%, rgba(212,111,23,.16), transparent 72%), /* naranja der-media */
+    radial-gradient(min(40vw,580px) min(32vw,460px) at 0% 50%,  rgba(18,122,62,.18),  transparent 70%), /* verde izq-media */
+    radial-gradient(min(30vw,440px) min(24vw,340px) at 78% 66%, rgba(18,122,62,.14),  transparent 72%), /* gota verde */
+    radial-gradient(min(42vw,600px) min(34vw,480px) at 98% 74%, rgba(212,111,23,.18), transparent 72%), /* naranja der-baja */
+    radial-gradient(min(44vw,640px) min(34vw,480px) at 2% 84%,  rgba(11,79,42,.16),  transparent 72%), /* verde-hondo sombra */
+    radial-gradient(min(40vw,580px) min(30vw,440px) at 90% 96%, rgba(232,163,58,.18), transparent 72%), /* oro pie */
+
+    /* === TEXTURA JASPEADA (debajo del color, da profundidad de papel) === */
+    radial-gradient(min(30vw,440px) min(24vw,340px) at 12% 9%,  var(--bg-veta), transparent 70%),
+    radial-gradient(min(28vw,420px) min(26vw,360px) at 55% 88%, var(--bg-veta), transparent 72%),
+
+    /* === BASE vertical (un solo gradiente = cero costuras) === */
+    linear-gradient(180deg, #FDFAF2 0%, var(--bg) 46%, #ECE2CE 100%);
+
+  background-repeat: no-repeat;
   color: var(--tinta); font-family: var(--f-base); font-size: 16px; line-height: 1.55;
 }
 img { max-width: 100% }
@@ -80,7 +94,7 @@ header.top .wrap { display: grid; grid-template-columns: 1fr minmax(0, auto) 1fr
 .marca-logo { height: 44px; width: auto; display: block }
 .marca .placeholder.marca-logo { width: 190px; padding: 2px 6px; font-size: 9px; gap: 0 }
 .marca .placeholder .ph-spec, .marca .placeholder .ph-ruta, .marca .placeholder .ph-desc { display: none }
-nav.menu { margin-left: end; display: flex; gap: 4px }
+nav.menu { justify-self: end; display: flex; gap: 4px }
 nav.menu a { text-decoration: none; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 8px }
 nav.menu a:hover { background: var(--papel); color: var(--verde) }
 @media (max-width: 640px) { nav.menu { display: none } }
@@ -232,4 +246,88 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space
 }
 @media (max-width: 640px) {
   .hashtag-top { font-size: 10px; letter-spacing: 0 }
+}
+
+/* ==========================================
+   ANIMACIÓN AL RECARGAR LA PÁGINA (Fade In Up)
+   ========================================== */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicamos la animación de entrada al cuerpo o a los contenedores principales */
+body {
+  animation: aparecer 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+/* ==========================================
+   ANIMACIÓN PARA LAS 4 FOTOS CIRCULARES
+   ========================================== */
+.circulos figure {
+  margin: 0;
+  width: 100%;
+  max-width: 200px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  border: 5px solid var(--papel);
+  
+  /* Transición suave para cuando el usuario pase el mouse */
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+}
+
+/* Efecto hover: se agrandan un poco, rotan ligeramente y mejoran la sombra */
+.circulos figure:hover {
+  transform: scale(1.08) rotate(3deg);
+  box-shadow: 0 22px 45px -15px rgba(60, 40, 10, 0.45);
+  z-index: 2; /* Para que al crecer se posicione por encima de los demás si se solapan */
+}
+
+/* Mantenemos el desplazamiento alternado original en pantallas grandes, combinándolo con el hover */
+@media (min-width: 821px) {
+  .circulos figure:nth-child(2n) {
+    transform: translateY(38px);
+  }
+  .circulos figure:nth-child(2n):hover {
+    transform: translateY(38px) scale(1.08) rotate(-3deg);
+  }
+}
+
+/* Estilo para el enlace de Google Maps en los lugares */
+.acto dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--naranja);
+  background: color-mix(in srgb, var(--naranja) 12%, transparent);
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.map-link:hover {
+  background: var(--naranja);
+  color: #fff;
+  transform: translateY(-1px);
 }
