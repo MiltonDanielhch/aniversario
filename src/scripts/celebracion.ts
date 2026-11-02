@@ -15,17 +15,83 @@ const dos = (v: number) => String(v).padStart(2, '0');
 
 const fuegos = crearFuegos($('fuegos') as HTMLCanvasElement, $('toggle-fuegos') as HTMLButtonElement, $('toggle-txt'));
 
-// Filtro por día
-const filtros = $('filtros');
-filtros.addEventListener('click', (e) => {
+/* ── Filtros (día + etapa) y colapso de etapas ─────────────────────────────── */
+const filtrosDias = $('filtros');
+const filtrosEtapas = document.getElementById('etapas');
+
+// Estado de la vista. 'semana' arranca expandida; las otras, plegadas.
+let diaActivo = 'todos';
+let etapaActiva = 'todas';
+const expandidas = new Set<string>(['semana']);
+
+function refrescar() {
+  const hayFiltro = diaActivo !== 'todos' || etapaActiva !== 'todas';
+
+  // 1) Cada día: pasa filtro de día AND filtro de etapa AND (hay filtro O su etapa está expandida).
+  document.querySelectorAll<HTMLElement>('.dia').forEach((d) => {
+    const okDia = diaActivo === 'todos' || d.dataset.fecha === diaActivo;
+    const okEtapa = etapaActiva === 'todas' || d.dataset.etapa === etapaActiva;
+    const abierta = expandidas.has(d.dataset.etapa!);
+    d.hidden = !(okDia && okEtapa && (hayFiltro || abierta));
+  });
+
+  // 2) La etapa se oculta ENTERA solo si el filtro de etapa la excluye
+  //    (el colapso NO oculta la cabecera: deja ver el botón "Ver N actos").
+  document.querySelectorAll<HTMLElement>('.etapa').forEach((sec) => {
+    const excluida = etapaActiva !== 'todas' && sec.dataset.etapa !== etapaActiva;
+    sec.hidden = excluida;
+    const btn = sec.querySelector<HTMLButtonElement>('.etapa-toggle');
+    if (btn) {
+      btn.setAttribute('aria-expanded', String(expandidas.has(sec.dataset.etapa!)));
+      btn.hidden = hayFiltro; // el toggle solo manda en vista "Todo"
+    }
+  });
+}
+
+filtrosDias.addEventListener('click', (e) => {
   const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-filtro]');
   if (!b) return;
-  const f = b.dataset.filtro!;
-  filtros.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-  document.querySelectorAll<HTMLElement>('.dia').forEach((d) => { d.hidden = f !== 'todos' && d.dataset.fecha !== f; });
+  diaActivo = b.dataset.filtro!;
+  filtrosDias.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  refrescar();
+  // Si elegiste un día concreto, llevá la vista hasta él (respeta scroll-padding-top del header).
+  if (diaActivo !== 'todos') {
+    requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>(`.dia[data-fecha="${diaActivo}"]`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+  }
 });
 
-// Estado de cada acto: Finalizado / En curso / Próximo
+filtrosEtapas?.addEventListener('click', (e) => {
+  const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-etapa]');
+  if (!b) return;
+  etapaActiva = b.dataset.etapa!;
+  filtrosEtapas.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  // Si el día activo no pertenece a la nueva etapa, volver a "Todos".
+  if (diaActivo !== 'todos') {
+    const d = document.querySelector<HTMLElement>(`.dia[data-fecha="${diaActivo}"]`);
+    if (!d || d.dataset.etapa !== etapaActiva) {
+      diaActivo = 'todos';
+      filtrosDias.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.filtro === 'todos')));
+    }
+  }
+  refrescar();
+});
+
+// Toggle de etapa (delegación): abre/cierra solo en vista "Todo".
+document.addEventListener('click', (e) => {
+  const t = (e.target as HTMLElement).closest<HTMLButtonElement>('.etapa-toggle');
+  if (!t || t.hidden) return;
+  if (diaActivo !== 'todos' || etapaActiva !== 'todas') return;
+  const et = t.closest<HTMLElement>('.etapa')!.dataset.etapa!;
+  if (expandidas.has(et)) expandidas.delete(et); else expandidas.add(et);
+  refrescar();
+});
+
+refrescar(); // estado inicial: semana grande abierta, resto plegado
+
+/* ── Estado de cada acto: Finalizado / En curso / Próximo (SIN CAMBIOS) ─────── */
 const actos = [...document.querySelectorAll<HTMLElement>('.acto')];
 function pintarEstados(n: number) {
   const prox = actos.find((a) => Number(a.dataset.t) > n);

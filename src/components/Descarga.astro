@@ -3,23 +3,37 @@ import { statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const PDF = '/cronograma-beni-184.pdf';
+
+// N.º de láminas del PDF oficial. Debe coincidir con el archivo en public/.
+// El peso se lee del disco abajo (nunca miente); las páginas se declaran aquí
+// de forma explícita porque contarlas sin dependencias no es fiable.
+const PAGINAS = 9;
 const kb = Math.round(statSync(join(process.cwd(), 'public', PDF)).size / 1024);
+
+// Miniaturas de vista previa. Escalable: agregá entradas y el layout las toma.
+// Los alt NO afirman fechas a propósito: "lámina oficial del cronograma" es
+// verdad para cualquier lámina del Beni 184 (todas comparten el mismo template).
+const PREVIEWS = [
+  { src: '/img/cronograma-p1.webp', alt: 'Lámina oficial del cronograma del 184 aniversario del Beni — vista previa' },
+  { src: '/img/cronograma-p2.webp', alt: 'Lámina oficial del cronograma del 184 aniversario del Beni — vista previa' },
+];
 ---
 <section class="bloque" id="descargar">
   <div class="wrap descarga">
     <div class="paginas">
-      <img src="/img/cronograma-p1.webp" alt="Página 1 del cronograma: 14, 16 y 17 de noviembre" width="583" height="800" loading="lazy" />
-      <img src="/img/cronograma-p2.webp" alt="Página 2 del cronograma: 17 y 18 de noviembre" width="583" height="800" loading="lazy" />
+      {PREVIEWS.map((p) => (
+        <img src={p.src} alt={p.alt} width="583" height="800" loading="lazy" />
+      ))}
     </div>
     <div>
       <div class="eyebrow">Cronograma oficial</div>
       <div class="titulo-sec titulo-sec--corto"><h2>Descárgalo y compártelo</h2></div>
-      <p>Las dos láminas oficiales del Gobierno Autónomo Departamental del Beni en un solo PDF, listas para imprimir o enviar por WhatsApp.</p>
+      <p>Las nueve láminas oficiales del Gobierno Autónomo Departamental del Beni en un solo PDF, listas para imprimir o enviar por WhatsApp.</p>
       <a class="btn" href={PDF} download="Cronograma-Beni-184-aniversario.pdf">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
         Descargar cronograma
       </a>
-      <div class="meta-pdf">PDF · 2 páginas · {kb} KB</div>
+      <div class="meta-pdf">PDF · {PAGINAS} páginas · {kb} KB</div>
     </div>
   </div>
 </section>

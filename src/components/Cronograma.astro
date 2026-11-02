@@ -1,49 +1,114 @@
 ---
-import { ACTOS, DIAS, marcaDeTiempo } from '../data/cronograma';
-const dias = Object.entries(DIAS);
+import { ACTOS, DIAS, FERIADOS, LIBRES, ETAPAS, fechasDeEtapa, marcaDeTiempo } from '../data/cronograma';
+// Conteo de actos por etapa para el rótulo "Ver N actos" del toggle.
+const actosPorEtapa = (id: string) => ACTOS.filter((a) => DIAS[a.fecha]?.etapa === id).length;
 ---
 <section class="bloque" id="cronograma">
   <div class="wrap">
     <div class="titulo-sec">
-      <div class="eyebrow">Trinidad · 14 al 18 de noviembre</div>
+      <div class="eyebrow">Trinidad · mes aniversario (1 al 28 de noviembre)</div>
       <h2>Actividades por día</h2>
     </div>
+
+    {/* Filtro por etapa */}
+    <div class="dias dias--etapa" id="etapas" role="group" aria-label="Filtrar por etapa">
+      <button type="button" data-etapa="todas" aria-pressed="true">Toda la programación</button>
+      {ETAPAS.map((e) => <button type="button" data-etapa={e.id} aria-pressed="false">{e.nombre}</button>)}
+    </div>
+
+    {/* Filtro por día (tira deslizable; el 18 lleva punto dorado) */}
     <div class="dias" id="filtros" role="group" aria-label="Filtrar por día">
       <button type="button" data-filtro="todos" aria-pressed="true">Todos</button>
-      {dias.map(([fecha, d]) => <button type="button" data-filtro={fecha} aria-pressed="false">{d.corto}</button>)}
-    </div>
-    <div class="panel">
-      {dias.map(([fecha, d]) => (
-        <div class="dia" data-fecha={fecha}>
-          <h3 class="cinta">{d.largo}{d.central && <em>Día central</em>}</h3>
-          {ACTOS.filter((a) => a.fecha === fecha).map((a) => (
-            <article class="acto" data-t={marcaDeTiempo(a)}>
-              <time class="hora" datetime={`${a.fecha}T${a.hora}-04:00`}>{a.hora}</time>
-              <div>
-                <h4>{a.acto}</h4>
-                <dl>
-                  <dt>Lugar</dt>
-                  <dd>
-                    {a.lugar} 
-                    <!-- Enlace directo para abrir la ubicación exacta en Google Maps -->
-                    <a 
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.lugar + ', Trinidad, Beni, Bolivia')}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      class="map-link"
-                      title="Ver ubicación en Google Maps"
-                    >
-                      Ver mapa 📍
-                    </a>
-                  </dd>
-                  <dt>Institución</dt><dd>{a.institucion}</dd>
-                </dl>
-              </div>
-              <span class="estado" hidden></span>
-            </article>
-          ))}
-        </div>
+      {Object.entries(DIAS).map(([fecha, d]) => (
+        <button type="button" data-filtro={fecha} aria-pressed="false" class:list={[d.central && 'chip-central']}>{d.corto}</button>
       ))}
+    </div>
+
+    <div class="panel">
+      {ETAPAS.map((e) => {
+        const n = actosPorEtapa(e.id);
+        const abierta = e.id === 'semana'; // Semana grande arranca expandida
+        return (
+          <section class="etapa" data-etapa={e.id}>
+            <header class="etapa-head">
+              <div class="etapa-head-txt">
+                <span class="etapa-rango mono">{e.rango}</span>
+                <h3 class="etapa-titulo">{e.nombre}</h3>
+                <p class="etapa-desc">{e.desc}</p>
+              </div>
+              <button
+                type="button"
+                class="etapa-toggle"
+                aria-expanded={String(abierta)}
+                aria-controls={`cuerpo-${e.id}`}
+              >
+                <span class="tg-chev" aria-hidden="true">▸</span>
+                <span class="tg-abrir">Ver {n} actos</span>
+                <span class="tg-cerrar">Ocultar</span>
+              </button>
+            </header>
+
+            <div class="etapa-cuerpo" id={`cuerpo-${e.id}`}>
+              {fechasDeEtapa(e.id).map((fecha) => {
+                /* ── Feriado ── */
+                if (FERIADOS[fecha]) {
+                  const f = FERIADOS[fecha];
+                  return (
+                    <div class="dia dia--feriado" data-fecha={fecha} data-etapa={e.id}>
+                      <span class="feriado-tag">Feriado</span>
+                      <p class="feriado-txt">{f.texto}</p>
+                    </div>
+                  );
+                }
+                /* ── Día sin acto ── */
+                if (LIBRES[fecha]) {
+                  const l = LIBRES[fecha];
+                  return (
+                    <div class="dia dia--libre" data-fecha={fecha} data-etapa={e.id}>
+                      <span class="libre-fecha">{l.largo}</span>
+                      <p class="libre-txt">Sin actividad programada</p>
+                    </div>
+                  );
+                }
+                /* ── Día con actos ── */
+                const d = DIAS[fecha];
+                const actos = ACTOS.filter((a) => a.fecha === fecha);
+                return (
+                  <div class:list={['dia', d.central && 'dia--central']} data-fecha={fecha} data-etapa={e.id}>
+                    <div class="dia" data-fecha={fecha} data-etapa={e.id}>
+                      <h3 class="cinta">{d.largo}{d.central && <em>Día central</em>}</h3>
+                      {actos.map((a) => (
+                        <article class:list={['acto', a.destacado && 'acto--dest']} data-t={marcaDeTiempo(a)}>
+                          <time class="hora" datetime={`${a.fecha}T${a.hora}-04:00`}>{a.hora}</time>
+                          <div>
+                            {a.destacado && <span class="dest-pill">★ Imperdible</span>}
+                            <h4>{a.acto}</h4>
+                            <dl>
+                              <dt>Lugar</dt>
+                              <dd>
+                                {a.lugar}
+                                <a
+                                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.lugar + ', Trinidad, Beni, Bolivia')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  class="map-link"
+                                  title="Ver ubicación en Google Maps"
+                                >Ver mapa 📍</a>
+                              </dd>
+                              <dt>Institución</dt><dd>{a.institucion}</dd>
+                            </dl>
+                          </div>
+                          <span class="estado" hidden></span>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
     </div>
   </div>
 </section>

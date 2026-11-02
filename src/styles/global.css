@@ -331,3 +331,147 @@ body {
   color: #fff;
   transform: translateY(-1px);
 }
+
+/* Enlace “Ver mapa” dentro de cada acto */
+.map-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: 6px; font-size: 12px; font-weight: 700;
+  color: var(--verde); text-decoration: none;
+  border-bottom: 1px dotted var(--verde);
+}
+.map-link:hover { color: var(--naranja); border-bottom-color: var(--naranja) }
+
+/* 23 días → tira deslizable en vez de muro de pastillas */
+.dias { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin;
+  padding-bottom: 6px; -webkit-overflow-scrolling: touch }
+.dias button { flex: 0 0 auto }
+
+
+/* ═══ Etapas del cronograma (NUEVO) ═══ */
+.etapa { padding: 6px 0 4px }
+.etapa + .etapa { border-top: 1px solid var(--borde); margin-top: 18px; padding-top: 22px }
+.etapa-head { padding: 0 28px 14px }
+.etapa-rango { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--verde); background: color-mix(in srgb, var(--verde) 12%, transparent); border-radius: 999px; padding: 3px 10px }
+.etapa-titulo { font-size: clamp(18px, 2.4vw, 23px); font-weight: 800; color: var(--naranja); text-transform: uppercase; letter-spacing: .02em; margin: 8px 0 2px }
+.etapa-desc { margin: 0; color: var(--tinta-suave); font-size: 14px; max-width: 60ch }
+@media (max-width: 640px) { .etapa-head { padding: 0 20px 12px } }
+
+/* Chips de etapa (distintos a los de día) */
+.dias--etapa { margin-bottom: 10px }
+.dias--etapa button { border-color: var(--naranja); color: var(--naranja) }
+.dias--etapa button[aria-pressed="true"] { background: var(--naranja); color: #fff }
+
+/* Feriado y días sin acto (discretos, sin cinta ni panel pesado) */
+.dia--feriado, .dia--libre { padding: 14px 28px; border-top: 1px dashed var(--borde); display: flex; align-items: center; gap: 12px; flex-wrap: wrap }
+.dia--feriado { background: color-mix(in srgb, var(--oro) 10%, transparent) }
+.feriado-tag { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #3A2400; background: var(--oro); border-radius: 999px; padding: 3px 10px }
+.feriado-txt { margin: 0; font-weight: 700; color: var(--tinta) }
+.libre-fecha { font-weight: 700; color: var(--tinta) }
+.libre-txt { margin: 0; font-size: 13px; color: var(--tinta-suave); font-style: italic }
+@media (max-width: 640px) { .dia--feriado, .dia--libre { padding: 14px 20px } }
+
+/* [quick-win] Enlace “Ver mapa” */
+.map-link { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: 12px; font-weight: 700; color: var(--verde); text-decoration: none; border-bottom: 1px dotted var(--verde) }
+.map-link:hover { color: var(--naranja); border-bottom-color: var(--naranja) }
+
+/* [quick-win] 23+ días → tira deslizable en vez de muro */
+.dias { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; -webkit-overflow-scrolling: touch }
+.dias button { flex: 0 0 auto }
+
+/* Actos imperdibles: jerarquía sin romper el grid ni el JS */
+.acto--dest { background: color-mix(in srgb, var(--naranja) 7%, transparent); box-shadow: inset 4px 0 0 var(--naranja); }
+.acto--dest h4 { color: var(--verde-hondo); }
+.dest-pill { display: block; width: max-content; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #3A2400; background: var(--oro); border-radius: 999px; padding: 2px 9px; margin-bottom: 5px; }
+
+/* Punto dorado permanente en el chip del día central (aunque no esté presionado) */
+#filtros button.chip-central { position: relative; }
+#filtros button.chip-central::after { content: ""; position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--oro); box-shadow: 0 0 0 2px var(--papel); }
+/* Fade en los bordes del carrusel de días: indica que sigue a la derecha */
+#filtros { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%); }
+
+/* ═══════════ CRONOGRAMA · etapas colapsables + imperdibles + carrusel ═══════════ */
+
+/* Cabecera de etapa: texto a la izquierda, toggle a la derecha, centrado en vertical */
+.etapa { padding: 6px 0 4px }
+.etapa + .etapa { border-top: 1px solid var(--borde); margin-top: 18px; padding-top: 22px }
+.etapa-head { display: flex; align-items: center; gap: 16px; padding: 0 28px 14px }
+.etapa-head-txt { flex: 1; min-width: 0 }
+.etapa-rango { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--verde); background: color-mix(in srgb, var(--verde) 12%, transparent); border-radius: 999px; padding: 3px 10px }
+.etapa-titulo { font-size: clamp(18px, 2.4vw, 23px); font-weight: 800; color: var(--naranja); text-transform: uppercase; letter-spacing: .02em; margin: 8px 0 2px }
+.etapa-desc { margin: 0; color: var(--tinta-suave); font-size: 14px; max-width: 60ch }
+
+/* Botón abrir/cerrar etapa */
+.etapa-toggle {
+  flex: none; display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--verde); background: transparent; border: 1.5px solid var(--verde);
+  border-radius: 999px; padding: 7px 14px; cursor: pointer; white-space: nowrap;
+  transition: background .2s, color .2s;
+}
+.etapa-toggle:hover { background: color-mix(in srgb, var(--verde) 10%, transparent) }
+.tg-chev { display: inline-block; transition: transform .25s ease }
+.etapa-toggle[aria-expanded="true"] .tg-chev { transform: rotate(90deg) }
+/* Rótulo según estado (sin tocar texto desde JS) */
+.etapa-toggle .tg-cerrar { display: none }
+.etapa-toggle[aria-expanded="true"] .tg-abrir { display: none }
+.etapa-toggle[aria-expanded="true"] .tg-cerrar { display: inline }
+
+/* Feriado y días sin acto (discretos, sin cinta ni panel pesado) */
+.dia--feriado, .dia--libre { padding: 14px 28px; border-top: 1px dashed var(--borde); display: flex; align-items: center; gap: 12px; flex-wrap: wrap }
+.dia--feriado { background: color-mix(in srgb, var(--oro) 10%, transparent) }
+.feriado-tag { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #3A2400; background: var(--oro); border-radius: 999px; padding: 3px 10px }
+.feriado-txt { margin: 0; font-weight: 700; color: var(--tinta) }
+.libre-fecha { font-weight: 700; color: var(--tinta) }
+.libre-txt { margin: 0; font-size: 13px; color: var(--tinta-suave); font-style: italic }
+
+/* Actos imperdibles: jerarquía sin romper el grid ni el JS (inset = no desplaza columnas) */
+.acto--dest { background: color-mix(in srgb, var(--naranja) 7%, transparent); box-shadow: inset 4px 0 0 var(--naranja) }
+.acto--dest h4 { color: var(--verde-hondo) }
+.dest-pill { display: block; width: max-content; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #3A2400; background: var(--oro); border-radius: 999px; padding: 2px 9px; margin-bottom: 5px }
+
+/* Chips de etapa (naranja) vs chips de día (verde) */
+.dias--etapa { margin-bottom: 10px }
+.dias--etapa button { border-color: var(--naranja); color: var(--naranja) }
+.dias--etapa button[aria-pressed="true"] { background: var(--naranja); color: #fff }
+
+/* Punto dorado permanente en el chip del día central */
+#filtros button.chip-central { position: relative }
+#filtros button.chip-central::after { content: ""; position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--oro); box-shadow: 0 0 0 2px var(--papel) }
+
+/* Carrusel de días: una sola fila deslizable + fundido en bordes (indica que sigue a la derecha) */
+.dias { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; -webkit-overflow-scrolling: touch }
+.dias button { flex: 0 0 auto }
+#filtros { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%) }
+
+/* Enlace “Ver mapa” dentro de cada acto */
+.map-link { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; font-size: 12px; font-weight: 700; color: var(--verde); text-decoration: none; border-bottom: 1px dotted var(--verde) }
+.map-link:hover { color: var(--naranja); border-bottom-color: var(--naranja) }
+
+@media (max-width: 640px) {
+  .etapa-head { padding: 0 20px 12px }
+  .dia--feriado, .dia--libre { padding: 14px 20px }
+}
+
+
+/* Día central: cinta dorada (en vez de verde) + halo cálido en toda la columna */
+.dia--central .cinta { background: linear-gradient(90deg, #8A5A12 0%, var(--naranja) 55%, transparent 100%); box-shadow: 0 8px 18px rgba(212,111,23,.25); }
+.dia--central { border-radius: 14px; background: color-mix(in srgb, var(--oro) 8%, transparent); padding-bottom: 10px; }
+.dia--central .acto:first-of-type { border-top: 0; }
+
+
+/* Móvil: la fila de etapas envuelve (se leen enteros); solo los DÍAS deslizan */
+@media (max-width: 640px) {
+  .dias--etapa { flex-wrap: wrap; overflow-x: visible; }
+}
+/* Móvil: header en dos filas limpias (logo arriba, hashtag entero abajo) */
+@media (max-width: 640px) {
+  header.top .wrap { grid-template-columns: 1fr; row-gap: 3px; }
+  .marca { justify-self: start; }
+  .hashtag-top { justify-self: start; white-space: normal; font-size: 10.5px; letter-spacing: 0; }
+}
+
+/* Si PREVIEWS supera las 2 láminas: tira horizontal en vez de postal fija */
+/* @media (min-width: 821px) {
+  .paginas { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; }
+  .paginas img { flex: 0 0 auto; width: 200px; transform: none !important; }
+} */
